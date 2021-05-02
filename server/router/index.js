@@ -6,4 +6,6 @@ route.get('/session',session.getSession)
 route.post('/chat/:sessionId',chat.listener)
 route.get('/chat',chat.chats)
 route.get('/chat/:id',chat.chats)
+route.get('/messages',chat.chats)
+route.get('/messages/:id',chat.chats)
 module.exports=route;

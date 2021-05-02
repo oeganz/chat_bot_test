@@ -30,7 +30,7 @@ mongoose.connect(process.env.MONGODB_URL, {
 
 // start express server on port 5000
 app.listen(process.env.PORT, () => {
-    console.log("server started on port 5000");
+    console.log("server started on port "+process.env.PORT);
 });
 
 //SET ROUTE

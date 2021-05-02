@@ -33,6 +33,18 @@ function _calculateAge(birthday) { // birthday is a date
     var ageDate = new Date(ageDifMs); // miliseconds from epoch
     return Math.abs(ageDate.getUTCFullYear() - 1970);
 }
+function _calculateNextBirthday(v) { // birthday is a date
+    var one_day = 1000 * 60 * 60 * 24
+    let varr = v.split('-')
+    var birthday = new Date(parseInt(varr[0]), parseInt(varr[1]), parseInt(varr[2]));
+    var today = new Date();
+    birthday.setFullYear(today.getFullYear());
+    if (today > birthday) {
+        birthday.setFullYear(today.getFullYear() + 1);
+    }
+   //Calculate difference between days
+   return Math.floor((birthday - today) / (one_day))
+}
 
 function _botLogic(session,text){
 
@@ -47,7 +59,7 @@ function _botLogic(session,text){
                 session.state=STATE_REGISTER_NAME
                 return {session:session,text:'Awesome!!, Please Say Your Name..'}
             }else if (NEGATIVE_CHAT.toString().toLowerCase().includes(text)){
-                return {session:session,text:'Awww!!, Looks Like you Dont Believe me..'}
+                return {session:session,text:'Awww!!, Looks Like you Dont Believe me.. Goodbye 👋👋'}
             } else{
                 return {session:session,text:`Sorry i dont understand what you say, please chat me with ${POSITIVE_CHAT} or ${NEGATIVE_CHAT}` }
             }
@@ -63,7 +75,8 @@ function _botLogic(session,text){
                 session.user.dob=text
                 session.state=STATE_SIGNED
                 let age = _calculateAge(text)
-                return {session:session,text:`Hmmm!!, Let me check my crystal ball.. !@#KSIWM@! (BOT Spelling some magic words~~~ )... AHAA!! Sorry to Keep You waiting ${session.user.name}, your age is ${age} Years Old!!, Do you like to Try Again?`}
+                let days = _calculateNextBirthday(text)
+                return {session:session,text:`Hmmm!!, Let me check my crystal ball.. !@#KSIWM@! (BOT Spelling some magic words~~~ )... AHAA!! Sorry to Keep You waiting ${session.user.name}, your age is ${age} Years old and your next birthday is ${parseInt(days)} more days !! , Do you like to Try Again?`}
             }else{
                 return {session:session,text:`Ooops!!,I can't understand "${text}" Please chat me with these format YYYY-MM-DD EX: 1992-10-30`}
             }
@@ -73,7 +86,7 @@ function _botLogic(session,text){
                 session.state=STATE_REGISTER_NAME
                 return {session:session,text:'Awesome!!, Please Say Your Name..'}
             }else if (NEGATIVE_CHAT.toString().toLowerCase().includes(text)){
-                return {session:session,text:'Awww!!, Looks Like you Dont Believe me..'}
+                return {session:session,text:'Awww!!, Looks Like you Dont Believe me.. Goodbye 👋👋'}
             } else{
                 return {session:session,text:`Sorry i dont understand what you say, please chat me with ${POSITIVE_CHAT} or ${NEGATIVE_CHAT}` }
             }
@@ -96,6 +109,9 @@ module.exports={
     listener(req,res){
         const {sessionId} = req.params
         const {text} = req.body
+
+
+
         if(!sessionId)
            return  res.status(401).send('Session not set')
         if(!text)
@@ -107,7 +123,7 @@ module.exports={
             return res.status(401).send('Session not Exist')
 
 
-        console.log(session)
+
         //SAVE USER CHAT
         _saveToMongo(_convertPayload(session,text))
 
